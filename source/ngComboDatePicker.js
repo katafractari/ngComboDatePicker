@@ -116,8 +116,8 @@ angular.module("ngComboDatePicker", [])
             }
 
             // Verify if selected date is in the valid range.
-            if($scope.ngModel < $scope.minDate) $scope.ngModel = $scope.minDate;
-            if($scope.ngModel > $scope.maxDate) $scope.ngModel = $scope.maxDate;
+            if($scope.ngModel && $scope.ngModel < $scope.minDate) $scope.ngModel = $scope.minDate;
+            if($scope.ngModel && $scope.ngModel > $scope.maxDate) $scope.ngModel = $scope.maxDate;
 
             // Initialize place holders.
             $scope.placeHolders = null;
@@ -225,7 +225,7 @@ angular.module("ngComboDatePicker", [])
                     res.month = modelValue.getMonth();
                     res.year = modelValue.getFullYear();
                 } else {
-                    res.date = '';
+                    res.date = 1;
                     res.month = '';
                     res.year = '';
                     
