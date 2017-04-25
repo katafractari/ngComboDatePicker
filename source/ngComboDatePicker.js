@@ -131,20 +131,6 @@ angular.module("ngComboDatePicker", [])
                 }
             }
 
-            // Initialize list of years.
-            $scope.years = [];
-            for(var i=$scope.minDate.getFullYear(); i<=$scope.maxDate.getFullYear(); i++) {
-                $scope.years.push({value:i, name:i});
-            }
-
-            // Verify if the order of the years must be reversed.
-            if(typeof $scope.ngYearOrder == 'string' && $scope.ngYearOrder.indexOf('des') == 0) {
-                $scope.years.reverse();
-            }
-
-            // Prepend the years placeholder
-            if($scope.placeHolders) $scope.years.unshift($scope.placeHolders[0]);
-
             // Initialize list of months names.
             var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             if($scope.ngMonths !== undefined && $scope.ngMonths !== null) {
@@ -174,6 +160,29 @@ angular.module("ngComboDatePicker", [])
                 }
             };
 
+			// Update list of years.
+			$scope.updateYearList = function(month) {
+				// Parse parameter.
+				month = parseIntStrict(month);
+
+				$scope.years = [];
+				for(var i=$scope.minDate.getFullYear(); i<=$scope.maxDate.getFullYear(); i++) {
+				    var now = new Date();
+					if(now.getFullYear() === i && month !== null && month < now.getMonth())
+					    continue;
+
+                    $scope.years.push({value: i, name: i});
+				}
+
+				// Verify if the order of the years must be reversed.
+				if(typeof $scope.ngYearOrder == 'string' && $scope.ngYearOrder.indexOf('des') == 0) {
+					$scope.years.reverse();
+				}
+
+				// Prepend the years placeholder
+				if($scope.placeHolders) $scope.years.unshift($scope.placeHolders[0]);
+			};
+
             // Initialize list of days.
             $scope.updateDateList = function(month, year) {
                 // Parse parameters.
@@ -201,6 +210,9 @@ angular.module("ngComboDatePicker", [])
                     $scope.dates.push({value:i, name:i});
                 }
             };
+
+			// Initialize list of years.
+			$scope.updateYearList();
         } ],
         link: function(scope, element, attrs, ngModelCtrl) {
             // Initialize variables.
@@ -238,6 +250,7 @@ angular.module("ngComboDatePicker", [])
 
                 // Hide or show days and months according to the min and max dates.
                 scope.updateMonthList(res.year);
+				scope.updateYearList(res.month);
                 scope.updateDateList(res.month, res.year);
                 return res;
             });
@@ -253,7 +266,7 @@ angular.module("ngComboDatePicker", [])
             scope.$watch('date + "-" + month + "-" + year', function(newValue, oldValue) {
                 if(newValue != oldValue) {
                     ngModelCtrl.$setViewValue({
-                        date: scope.date,
+                        date: 1,
                         month: scope.month,
                         year: scope.year
                     });
@@ -295,6 +308,7 @@ angular.module("ngComboDatePicker", [])
                 
                 // Hide or show days and months according to the min and max dates.
                 scope.updateMonthList(viewValue.year);
+				scope.updateYearList(viewValue.month);
                 scope.updateDateList(viewValue.month, viewValue.year);
                           
                 return res;
