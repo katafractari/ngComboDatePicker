@@ -80,7 +80,8 @@ angular.module("ngComboDatePicker", [])
             ngYearOrder: '@',
             ngTimezone: '@',
             ngPlaceholder: '@',
-            ngRequired: '@'
+            ngRequired: '@',
+            ngShowDays: '@'
         },
         require: 'ngModel',
         controller: ['$scope', function($scope) {
@@ -237,7 +238,7 @@ angular.module("ngComboDatePicker", [])
                     res.month = modelValue.getMonth();
                     res.year = modelValue.getFullYear();
                 } else {
-                    res.date = 1;
+                    res.date = scope.ngShowDays ? '' : 1;
                     res.month = '';
                     res.year = '';
 
@@ -266,7 +267,7 @@ angular.module("ngComboDatePicker", [])
             scope.$watch('date + "-" + month + "-" + year', function(newValue, oldValue) {
                 if(newValue != oldValue) {
                     ngModelCtrl.$setViewValue({
-                        date: 1,
+                        date: scope.ngShowDays === 'true' ? scope.date : 1,
                         month: scope.month,
                         year: scope.year
                     });
@@ -314,7 +315,7 @@ angular.module("ngComboDatePicker", [])
                 return res;
             });
         },
-        template: function(element, attrs) {
+        template: function(element, attrs, $scope) {
             // Verify if addtional attributes were defined.
             var strAttrs = ['', '', ''];
             var attrNames = ['ngAttrsDate', 'ngAttrsMonth', 'ngAttrsYear'];
@@ -338,13 +339,9 @@ angular.module("ngComboDatePicker", [])
             }
 
             // Generate HTML code.
-            var html =
-                '<select ng-model="date" '+strAttrs[0]+' ng-options="date.value as date.name disable when date.disabled for date in dates"></select>' +
+            return (attrs.ngShowDays === 'true' ? '<select ng-model="date" '+strAttrs[0]+' ng-options="date.value as date.name disable when date.disabled for date in dates"></select>' : '') +
                 '<select ng-model="month" '+strAttrs[1]+' ng-options="month.value as month.name disable when month.disabled for month in months"></select>' +
                 '<select ng-model="year" '+strAttrs[2]+' ng-options="year.value as year.name disable when year.disabled for year in years"></select>'
-            ;
-
-            return html;
         }
     }
 });
