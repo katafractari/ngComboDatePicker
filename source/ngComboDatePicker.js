@@ -167,16 +167,18 @@ angular.module("ngComboDatePicker", [])
                 month = parseIntStrict(month);
 
                 $scope.years = [];
+                var isReverse = typeof $scope.ngYearOrder == 'string' && $scope.ngYearOrder.indexOf('des') == 0;
                 for (var i = $scope.minDate.getFullYear(); i <= $scope.maxDate.getFullYear(); i++) {
                     var now = new Date();
-                    if(now.getFullYear() === i && month !== null && month < now.getMonth())
+                    if(now.getFullYear() === i && month !== null &&
+                        (isReverse && month > now.getMonth() || !isReverse && month < now.getMonth()))
                         continue;
 
                     $scope.years.push({value: i, name: i});
                 }
 
                 // Verify if the order of the years must be reversed.
-                if(typeof $scope.ngYearOrder == 'string' && $scope.ngYearOrder.indexOf('des') == 0) {
+                if(isReverse) {
                     $scope.years.reverse();
                 }
 
