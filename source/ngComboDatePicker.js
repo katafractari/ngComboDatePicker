@@ -121,16 +121,18 @@ angular.module("ngComboDatePicker", [])
             if($scope.ngModel && $scope.ngModel > $scope.maxDate) $scope.ngModel = $scope.maxDate;
 
             // Initialize place holders.
-            $scope.placeHolders = null;
-            if($scope.ngPlaceholder !== undefined && $scope.ngPlaceholder !== null && (typeof $scope.ngPlaceholder == 'string' || Array.isArray($scope.ngPlaceholder))) {
-                var holders = typeof $scope.ngPlaceholder == 'string'? $scope.ngPlaceholder.split(',') : $scope.ngPlaceholder;
-                if(holders.length == 3) {
-                    $scope.placeHolders = [];
-                    for(var h=0; h<holders.length; h++) {
-                        $scope.placeHolders.push({value:'', name:holders[h], disabled:false});
+            $scope.updatePlaceholders = function() {
+                $scope.placeHolders = null;
+                if($scope.ngPlaceholder !== undefined && $scope.ngPlaceholder !== null && (typeof $scope.ngPlaceholder == 'string' || Array.isArray($scope.ngPlaceholder))) {
+                    var holders = typeof $scope.ngPlaceholder == 'string' ? $scope.ngPlaceholder.split(',') : $scope.ngPlaceholder;
+                    if(holders.length == 3) {
+                        $scope.placeHolders = [];
+                        for (var h = 0; h < holders.length; h++) {
+                            $scope.placeHolders.push({value: '', name: holders[h], disabled: false});
+                        }
                     }
                 }
-            }
+            };
 
             // Initialize list of months names.
             var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -214,14 +216,20 @@ angular.module("ngComboDatePicker", [])
                 }
             };
 
-            // Initialize list of years.
             $scope.updateYearList();
+            $scope.updatePlaceholders();
         } ],
         link: function(scope, element, attrs, ngModelCtrl) {
             // Initialize variables.
             var jqLite = angular.element;
             var children = jqLite(element[0]).children();
             var order = scope.ngOrder.split('');
+
+            // Watch for placeholder changes
+            attrs.$observe('ngPlaceholder', function() {
+                scope.updatePlaceholders();
+                scope.updateMonthList(ngModelCtrl.$viewValue.year);
+            });
 
             // Reorder elements.
             for(var i=0; i<order.length; i++) {
