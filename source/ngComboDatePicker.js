@@ -229,6 +229,8 @@ angular.module("ngComboDatePicker", [])
             attrs.$observe('ngPlaceholder', function() {
                 scope.updatePlaceholders();
                 scope.updateMonthList(ngModelCtrl.$viewValue.year);
+                scope.updateYearList(ngModelCtrl.$viewValue.month);
+                scope.updateDateList(ngModelCtrl.$viewValue.month, ngModelCtrl.$viewValue.year);
             });
 
             // Reorder elements.
